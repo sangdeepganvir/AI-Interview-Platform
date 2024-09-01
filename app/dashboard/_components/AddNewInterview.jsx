@@ -112,7 +112,7 @@ function AddNewInterview() {
                             <Button type="submit" disabled={loading}>
                                 {loading ?
                                 <>
-                                <LoaderPinwheel className='animate-spin'/>'Generating Questions for you' 
+                                <LoaderPinwheel className='animate-spin'/>Generating Questions for you
                                 </> : 'Start Interview'
                                 }
                                 </Button>
