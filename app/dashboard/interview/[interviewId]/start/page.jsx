@@ -20,19 +20,32 @@ function StartInterview({params}) {
     },[])
 
     // Get interview data by mockId , or interview Id
-    const GetInterviewDetails =async () =>{
+    const GetInterviewDetails = async () => {
+      try {
+          const result = await db.select().from(MockInterview)
+              .where(eq(MockInterview.mockId, params.interviewId));
 
-        const result = await db.select().from(MockInterview)
-        .where(eq(MockInterview.mockId , params.interviewId))
+          // Extract the JSON content from the result
+          let res = result[0].jsonMockResp;
 
-        const res = (result[0].jsonMockResp).replace('``` ', '');
-        //const jsonMockStringify = JSON.stringify(result[0].jsonMockResp);
-        const jsonMockResp=JSON.parse(res);
-        //console.log(jsonMockResp);
+          // Trim any extra content by looking for the JSON array
+          const startIndex = res.indexOf('['); // Find the first occurrence of '['
+          const endIndex = res.lastIndexOf(']') + 1; // Find the last occurrence of ']'
 
-        setMockInterviewQuestions(jsonMockResp);
-        setInterviewData(result[0]);
-    }
+          // Extract only the JSON part
+          res = res.slice(startIndex, endIndex);
+
+          // Parse the JSON string
+          const jsonMockResp = JSON.parse(res);
+
+          // Update the state with the parsed JSON data
+          setMockInterviewQuestions(jsonMockResp);
+          setInterviewData(result[0]);
+      } catch (error) {
+          console.error("Error fetching interview details:", error);
+      }
+  };
+
 
   return (
     <div>
